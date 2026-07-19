@@ -2,190 +2,322 @@
 
 {% block content %}
 
-<div class="max-w-4xl mx-auto mt-10">
+<section class="max-w-6xl mx-auto">
 
-    <div class="bg-white shadow-xl rounded-xl p-8">
+    <div class="grid lg:grid-cols-5 gap-10">
 
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">
-            Add Vehicle
-        </h1>
+        <!-- Left Panel -->
 
-        <p class="text-gray-500 mb-8">
-            Fill in the details below to add a new vehicle to the inventory.
-        </p>
+        <div class="lg:col-span-2">
 
-        <form
-            id="addVehicleForm"
-            class="space-y-6"
-            enctype="multipart/form-data"
-        >
+            <div class="sticky top-24 rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-900 p-10 text-white shadow-2xl">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <span class="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold">
 
-                <div>
+                    CarNova Inventory
 
-                    <label class="block mb-2 font-semibold">
-                        Make
-                    </label>
+                </span>
 
-                    <input
-                        id="make"
-                        type="text"
-                        placeholder="Toyota"
-                        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-                        required
-                    >
+                <h1 class="mt-8 text-5xl font-extrabold leading-tight">
 
-                </div>
+                    Add a New Vehicle
 
-                <div>
+                </h1>
 
-                    <label class="block mb-2 font-semibold">
-                        Model
-                    </label>
+                <p class="mt-6 text-slate-200 leading-8">
 
-                    <input
-                        id="model"
-                        type="text"
-                        placeholder="Fortuner"
-                        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-                        required
-                    >
+                    Expand your inventory by adding a new vehicle with its details, pricing and image.
 
-                </div>
+                </p>
 
-            </div>
+                <div class="mt-12 space-y-6">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex gap-4">
 
-                <div>
+                        <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl">
 
-                    <label class="block mb-2 font-semibold">
-                        Category
-                    </label>
+                            🚗
 
-                    <select
-                        id="category"
-                        class="w-full border rounded-lg p-3"
-                    >
+                        </div>
 
-                        <option>Sedan</option>
-                        <option>SUV</option>
-                        <option>Hatchback</option>
-                        <option>Truck</option>
-                        <option>Luxury</option>
-                        <option>Sports</option>
+                        <div>
 
-                    </select>
+                            <h3 class="font-semibold">
 
-                </div>
+                                Premium Inventory
 
-                <div>
+                            </h3>
 
-                    <label class="block mb-2 font-semibold">
-                        Price
-                    </label>
+                            <p class="text-sm text-slate-300">
 
-                    <input
-                        id="price"
-                        type="number"
-                        min="1"
-                        placeholder="2500000"
-                        class="w-full border rounded-lg p-3"
-                        required
-                    >
+                                Keep your showroom updated.
 
-                </div>
+                            </p>
 
-            </div>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </div>
 
-                <div>
+                    <div class="flex gap-4">
 
-                    <label class="block mb-2 font-semibold">
-                        Quantity
-                    </label>
+                        <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl">
 
-                    <input
-                        id="quantity"
-                        type="number"
-                        min="0"
-                        placeholder="10"
-                        class="w-full border rounded-lg p-3"
-                        required
-                    >
+                            📷
 
-                </div>
+                        </div>
 
-                <div>
+                        <div>
 
-                    <label class="block mb-2 font-semibold">
-                        Vehicle Image
-                    </label>
+                            <h3 class="font-semibold">
 
-                    <input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        class="w-full border rounded-lg p-2"
-                    >
+                                Image Preview
+
+                            </h3>
+
+                            <p class="text-sm text-slate-300">
+
+                                Upload high quality vehicle photos.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="flex gap-4">
+
+                        <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl">
+
+                            ⚡
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-semibold">
+
+                                Fast Management
+
+                            </h3>
+
+                            <p class="text-sm text-slate-300">
+
+                                Inventory updates happen instantly.
+
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <div class="mt-6">
+        </div>
 
-                <img
-                    id="imagePreview"
-                    src=""
-                    alt="Preview"
-                    class="hidden w-full md:w-96 h-60 object-cover rounded-lg border shadow"
-                >
+        <!-- Form -->
+
+        <div class="lg:col-span-3">
+
+            <div class="rounded-3xl bg-white shadow-2xl p-10">
+
+                <div class="mb-10">
+
+                    <h2 class="text-4xl font-extrabold text-slate-800">
+
+                        Vehicle Details
+
+                    </h2>
+
+                    <p class="mt-2 text-slate-500">
+
+                        Fill all the required information below.
+
+                    </p>
+
+                </div>
+
+                <form
+                    id="addVehicleForm"
+                    class="space-y-8"
+                    enctype="multipart/form-data">
+
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-slate-700">
+
+                                Make
+
+                            </label>
+
+                            <input
+                                id="make"
+                                type="text"
+                                placeholder="Toyota"
+                                class="rounded-xl"
+                                required>
+
+                        </div>
+
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-slate-700">
+
+                                Model
+
+                            </label>
+
+                            <input
+                                id="model"
+                                type="text"
+                                placeholder="Fortuner"
+                                class="rounded-xl"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-slate-700">
+
+                                Category
+
+                            </label>
+
+                            <select
+                                id="category"
+                                class="rounded-xl">
+
+                                <option>Sedan</option>
+                                <option>SUV</option>
+                                <option>Hatchback</option>
+                                <option>Truck</option>
+                                <option>Luxury</option>
+                                <option>Sports</option>
+
+                            </select>
+
+                        </div>
+
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-slate-700">
+
+                                Price (₹)
+
+                            </label>
+
+                            <input
+                                id="price"
+                                type="number"
+                                min="1"
+                                placeholder="2500000"
+                                class="rounded-xl"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-slate-700">
+
+                                Quantity
+
+                            </label>
+
+                            <input
+                                id="quantity"
+                                type="number"
+                                min="0"
+                                placeholder="10"
+                                class="rounded-xl"
+                                required>
+
+                        </div>
+
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-slate-700">
+
+                                Vehicle Image
+
+                            </label>
+
+                            <input
+                                id="image"
+                                type="file"
+                                accept="image/*"
+                                class="rounded-xl border border-slate-300 p-3">
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <img
+                            id="imagePreview"
+                            src=""
+                            class="hidden h-72 w-full rounded-2xl border object-cover shadow-lg">
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-xl bg-indigo-600 py-4 text-lg font-bold text-white transition hover:bg-indigo-700">
+
+                        Add Vehicle
+
+                    </button>
+
+                </form>
 
             </div>
 
-            <button
-                type="submit"
-                class="bg-green-600 hover:bg-green-700 transition text-white px-8 py-3 rounded-lg font-semibold"
-            >
-                Add Vehicle
-            </button>
-
-        </form>
+        </div>
 
     </div>
 
-</div>
+</section>
 
 <script>
 
-const imageInput = document.getElementById("image");
-const preview = document.getElementById("imagePreview");
+const imageInput=document.getElementById("image");
+const preview=document.getElementById("imagePreview");
 
-imageInput.addEventListener("change", function () {
+imageInput.addEventListener("change",function(){
 
-    const file = this.files[0];
+const file=this.files[0];
 
-    if (!file) {
+if(!file){
 
-        preview.classList.add("hidden");
-        preview.src = "";
-        return;
+preview.src="";
+preview.classList.add("hidden");
+return;
 
-    }
+}
 
-    const reader = new FileReader();
+const reader=new FileReader();
 
-    reader.onload = function (e) {
+reader.onload=function(e){
 
-        preview.src = e.target.result;
-        preview.classList.remove("hidden");
+preview.src=e.target.result;
+preview.classList.remove("hidden");
 
-    };
+}
 
-    reader.readAsDataURL(file);
+reader.readAsDataURL(file);
 
 });
 

@@ -1,46 +1,54 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block content %}
 
-<section class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white">
+<section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-900 text-white shadow-2xl">
 
-    <div class="max-w-7xl mx-auto py-20 px-8">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.18),transparent_40%)]"></div>
 
-        <h1 class="text-5xl font-extrabold">
-            Find Your Perfect Vehicle
+    <div class="relative max-w-7xl mx-auto px-8 py-24">
+
+        <span class="inline-flex items-center rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+
+            🚘 Welcome to CarNova
+
+        </span>
+
+        <h1 class="mt-8 max-w-3xl text-6xl font-extrabold leading-tight">
+
+            Discover Your Next Journey.
+
         </h1>
 
-        <p class="mt-5 text-xl text-blue-100 max-w-2xl">
-            Explore our premium collection of cars, SUVs and commercial vehicles.
+        <p class="mt-6 max-w-2xl text-lg text-slate-200">
+
+            Browse premium cars, SUVs and commercial vehicles with real time inventory, seamless management and an elegant buying experience.
+
         </p>
 
-        <form method="GET" class="mt-10 bg-white rounded-2xl shadow-2xl p-6">
+        <form method="GET"
+              class="mt-12 rounded-2xl bg-white p-6 shadow-2xl">
 
-            <div class="grid md:grid-cols-3 gap-4">
+            <div class="grid gap-5 md:grid-cols-3">
 
                 <input
                     type="text"
                     name="search"
                     value="{{ search }}"
-                    placeholder="Search by Make or Model"
-                    class="border rounded-xl p-4 text-black focus:ring-2 focus:ring-blue-500 outline-none"
-                >
+                    placeholder="Search Make or Model"
+                    class="rounded-xl border border-slate-200 px-5 py-4 text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">
 
                 <select
                     name="category"
-                    class="border rounded-xl p-4 text-black focus:ring-2 focus:ring-blue-500 outline-none"
-                >
+                    class="rounded-xl border border-slate-200 px-5 py-4 text-slate-800">
 
                     <option value="">All Categories</option>
 
                     {% for category in categories %}
 
-                    <option
-                        value="{{ category }}"
-                        {% if selected_category == category %}selected{% endif %}
-                    >
+                    <option value="{{ category }}"
+                            {% if selected_category == category %}selected{% endif %}>
                         {{ category }}
                     </option>
 
@@ -49,10 +57,10 @@
                 </select>
 
                 <button
-                    type="submit"
-                    class="bg-blue-700 hover:bg-blue-800 transition duration-300 rounded-xl text-white font-semibold"
-                >
-                    Search
+                    class="rounded-xl bg-indigo-600 font-semibold text-white transition hover:bg-indigo-700">
+
+                    Search Vehicles
+
                 </button>
 
             </div>
@@ -63,75 +71,79 @@
 
 </section>
 
-<section class="max-w-7xl mx-auto py-16 px-8">
+<section class="mt-16">
 
-    <div class="flex justify-between items-center mb-10">
+    <div class="mb-10 flex items-center justify-between">
 
-        <h2 class="text-4xl font-bold text-gray-800">
+        <div>
 
-            Available Vehicles
+            <h2 class="text-4xl font-extrabold text-slate-800">
 
-        </h2>
+                Available Inventory
 
-        <span class="text-gray-500 font-medium">
+            </h2>
 
-            {{ vehicles|length }} Vehicle{{ vehicles|length|pluralize }}
+            <p class="mt-2 text-slate-500">
 
-        </span>
+                {{ vehicles|length }} vehicle{{ vehicles|length|pluralize }} available.
+
+            </p>
+
+        </div>
 
     </div>
 
     {% if vehicles %}
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
 
         {% for vehicle in vehicles %}
 
-        <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 group">
+        <div class="overflow-hidden rounded-3xl bg-white shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
 
             <div class="relative overflow-hidden">
 
                 {% if vehicle.image %}
 
-                <img
-                    src="{{ vehicle.image.url }}"
-                    alt="{{ vehicle.make }}"
-                    class="w-full h-60 object-cover group-hover:scale-110 transition duration-500"
-                >
+                <img src="{{ vehicle.image.url }}"
+                     class="h-64 w-full object-cover duration-500 hover:scale-110">
 
                 {% else %}
 
-                <img
-                    src="{% static 'images/no-image.png' %}"
-                    alt="No Image"
-                    class="w-full h-60 object-cover group-hover:scale-110 transition duration-500"
-                >
+                <img src="{% static 'images/no-image.png' %}"
+                     class="h-64 w-full object-cover">
 
                 {% endif %}
 
+                <div class="absolute left-5 top-5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow">
+
+                    {{ vehicle.category }}
+
+                </div>
+
                 {% if vehicle.quantity == 0 %}
 
-                <span class="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow">
+                <div class="absolute right-5 top-5 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white">
 
                     Out of Stock
 
-                </span>
+                </div>
 
                 {% elif vehicle.quantity <= 5 %}
 
-                <span class="absolute top-4 right-4 bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow">
+                <div class="absolute right-5 top-5 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white">
 
                     Low Stock
 
-                </span>
+                </div>
 
                 {% else %}
 
-                <span class="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow">
+                <div class="absolute right-5 top-5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">
 
-                    Available
+                    In Stock
 
-                </span>
+                </div>
 
                 {% endif %}
 
@@ -139,74 +151,60 @@
 
             <div class="p-7">
 
-                <div class="flex justify-between items-start">
+                <h3 class="text-2xl font-bold text-slate-800">
+
+                    {{ vehicle.make }}
+
+                </h3>
+
+                <p class="mt-1 text-slate-500">
+
+                    {{ vehicle.model }}
+
+                </p>
+
+                <div class="mt-6 flex items-center justify-between">
 
                     <div>
 
-                        <h3 class="text-2xl font-bold text-gray-800">
+                        <p class="text-sm text-slate-500">
 
-                            {{ vehicle.make }}
-
-                        </h3>
-
-                        <p class="text-gray-500 mt-1">
-
-                            {{ vehicle.model }}
+                            Starting Price
 
                         </p>
+
+                        <h2 class="mt-1 text-3xl font-extrabold text-indigo-700">
+
+                            ₹{{ vehicle.price }}
+
+                        </h2>
 
                     </div>
 
-                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                    <div class="text-right">
 
-                        {{ vehicle.category }}
+                        <p class="text-sm text-slate-500">
 
-                    </span>
-
-                </div>
-
-                <div class="mt-6">
-
-                    <p class="text-gray-500">
-
-                        Starting From
-
-                    </p>
-
-                    <h2 class="text-4xl font-bold text-blue-700 mt-1">
-
-                        ₹{{ vehicle.price }}
-
-                    </h2>
-
-                </div>
-
-                <div class="mt-6 flex justify-between items-center">
-
-                    <div>
-
-                        <p class="text-gray-500 text-sm">
-
-                            Available Stock
+                            Stock
 
                         </p>
 
-                        <p class="font-bold text-lg">
+                        <h3 class="text-2xl font-bold">
 
                             {{ vehicle.quantity }}
 
-                        </p>
+                        </h3>
 
                     </div>
 
-                    <a
-                        href="{% url 'vehicle-details' vehicle.id %}"
-                        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-xl transition duration-300"
-                    >
-                        View Details
-                    </a>
-
                 </div>
+
+                <a href="{% url 'vehicle-details' vehicle.id %}"
+                   class="mt-8 flex w-full items-center justify-center rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700">
+
+                    View Details
+
+                </a>
 
             </div>
 
@@ -218,23 +216,23 @@
 
     {% else %}
 
-    <div class="bg-white rounded-2xl shadow-xl p-16 text-center">
+    <div class="rounded-3xl bg-white p-20 text-center shadow-lg">
 
-        <div class="text-7xl mb-6">
+        <div class="text-7xl">
 
-            🚗
+            🚘
 
         </div>
 
-        <h2 class="text-3xl font-bold text-gray-700">
+        <h2 class="mt-6 text-4xl font-bold text-slate-800">
 
             No Vehicles Found
 
         </h2>
 
-        <p class="mt-4 text-gray-500 text-lg">
+        <p class="mt-4 text-lg text-slate-500">
 
-            We couldn't find any vehicles matching your search criteria.
+            Try changing your search filters to explore more vehicles.
 
         </p>
 

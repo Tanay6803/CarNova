@@ -1,192 +1,237 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block content %}
 
-<div class="max-w-7xl mx-auto mt-12 px-6">
+<section class="max-w-7xl mx-auto">
 
-    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div class="grid lg:grid-cols-2 gap-10">
 
-        <div class="grid lg:grid-cols-2">
+        <!-- Vehicle Image -->
 
-            <!-- Vehicle Image -->
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
 
-            <div class="bg-gray-100 flex items-center justify-center p-8">
+            {% if vehicle.image %}
 
-                {% if vehicle.image %}
+            <img
+                src="{{ vehicle.image.url }}"
+                alt="{{ vehicle.make }}"
+                class="w-full h-[600px] object-cover hover:scale-105 duration-500">
 
-                <img
-                    src="{{ vehicle.image.url }}"
-                    alt="{{ vehicle.make }} {{ vehicle.model }}"
-                    class="w-full h-[500px] object-cover rounded-xl shadow-lg"
-                >
+            {% else %}
 
-                {% else %}
+            <img
+                src="{% static 'images/no-image.png' %}"
+                alt="No Image"
+                class="w-full h-[600px] object-cover">
 
-                <img
-                    src="{% static 'images/no-image.png' %}"
-                    alt="No Image"
-                    class="w-full h-[500px] object-cover rounded-xl shadow-lg"
-                >
+            {% endif %}
 
-                {% endif %}
+        </div>
 
-            </div>
+        <!-- Vehicle Information -->
 
-            <!-- Vehicle Information -->
+        <div class="rounded-3xl bg-white shadow-2xl p-10 flex flex-col justify-between">
 
-            <div class="p-10 flex flex-col justify-between">
+            <div>
 
-                <div>
+                <span class="inline-flex rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
 
-                    <span
-                        class="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-5">
+                    {{ vehicle.category }}
 
-                        {{ vehicle.category }}
+                </span>
 
-                    </span>
+                <h1 class="mt-6 text-5xl font-extrabold text-slate-800">
 
-                    <h1 class="text-5xl font-bold text-gray-800">
+                    {{ vehicle.make }}
 
-                        {{ vehicle.make }}
+                </h1>
 
-                    </h1>
+                <h2 class="mt-2 text-3xl text-slate-500">
 
-                    <h2 class="text-3xl text-gray-500 mt-2">
+                    {{ vehicle.model }}
 
-                        {{ vehicle.model }}
+                </h2>
 
-                    </h2>
+                <div class="mt-10 rounded-2xl bg-slate-50 p-8">
 
-                    <div class="mt-10 space-y-6 text-lg">
+                    <div class="flex justify-between py-5 border-b">
 
-                        <div class="flex justify-between border-b pb-3">
+                        <span class="font-semibold text-slate-600">
 
-                            <span class="font-semibold">
+                            Price
 
-                                Price
+                        </span>
 
-                            </span>
+                        <span class="text-3xl font-extrabold text-indigo-700">
 
-                            <span class="font-bold text-green-700">
+                            ₹ {{ vehicle.price }}
 
-                                ₹ {{ vehicle.price }}
+                        </span>
 
-                            </span>
+                    </div>
 
-                        </div>
+                    <div class="flex justify-between py-5 border-b">
 
-                        <div class="flex justify-between border-b pb-3">
+                        <span class="font-semibold text-slate-600">
 
-                            <span class="font-semibold">
+                            Category
 
-                                Category
+                        </span>
 
-                            </span>
+                        <span class="font-bold">
 
-                            <span>
+                            {{ vehicle.category }}
 
-                                {{ vehicle.category }}
+                        </span>
 
-                            </span>
+                    </div>
 
-                        </div>
+                    <div class="flex justify-between py-5 border-b">
 
-                        <div class="flex justify-between border-b pb-3">
+                        <span class="font-semibold text-slate-600">
 
-                            <span class="font-semibold">
+                            Available Stock
 
-                                Available Stock
+                        </span>
 
-                            </span>
+                        <span
+                            id="stockQuantity"
+                            class="text-2xl font-bold">
 
-                            <span
-                                id="stockQuantity"
-                                class="font-bold">
+                            {{ vehicle.quantity }}
 
-                                {{ vehicle.quantity }}
+                        </span>
 
-                            </span>
+                    </div>
 
-                        </div>
+                    <div class="flex justify-between items-center pt-5">
 
-                        <div class="flex justify-between">
+                        <span class="font-semibold text-slate-600">
 
-                            <span class="font-semibold">
+                            Availability
 
-                                Status
+                        </span>
 
-                            </span>
+                        <span
+                            id="stockBadge"
+                            class="
+                            rounded-full
+                            px-5
+                            py-2
+                            text-sm
+                            font-semibold
 
-                            <span
-                                id="stockBadge"
-                                class="
-                                px-3
-                                py-1
-                                rounded-full
-                                {% if vehicle.quantity == 0 %}
-                                    bg-red-100 text-red-700
-                                {% elif vehicle.quantity <= 5 %}
-                                    bg-yellow-100 text-yellow-700
-                                {% else %}
-                                    bg-green-100 text-green-700
-                                {% endif %}
-                                ">
+                            {% if vehicle.quantity == 0 %}
+                                bg-red-100 text-red-700
+                            {% elif vehicle.quantity <= 5 %}
+                                bg-amber-100 text-amber-700
+                            {% else %}
+                                bg-emerald-100 text-emerald-700
+                            {% endif %}
+                            ">
 
-                                {% if vehicle.quantity == 0 %}
-                                    Out of Stock
-                                {% elif vehicle.quantity <= 5 %}
-                                    Low Stock
-                                {% else %}
-                                    In Stock
-                                {% endif %}
+                            {% if vehicle.quantity == 0 %}
+                                Out of Stock
+                            {% elif vehicle.quantity <= 5 %}
+                                Low Stock
+                            {% else %}
+                                Available
+                            {% endif %}
 
-                            </span>
-
-                        </div>
+                        </span>
 
                     </div>
 
                 </div>
 
-                <div class="mt-12 flex flex-col sm:flex-row gap-4">
+                <div class="mt-10 grid grid-cols-3 gap-4">
 
-                    <button
+                    <div class="rounded-2xl bg-slate-50 p-6 text-center">
 
-                        id="purchaseBtn"
+                        <div class="text-3xl">
 
-                        onclick="purchaseVehicleLive({{ vehicle.id }})"
+                            🚘
 
-                        class="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl text-lg font-semibold transition"
+                        </div>
 
-                        {% if vehicle.quantity == 0 %}
-                        disabled
-                        {% endif %}>
+                        <p class="mt-3 text-sm text-slate-500">
 
-                        {% if vehicle.quantity == 0 %}
+                            Premium Quality
 
-                            Out of Stock
+                        </p>
 
-                        {% else %}
+                    </div>
 
-                            Purchase Vehicle
+                    <div class="rounded-2xl bg-slate-50 p-6 text-center">
 
-                        {% endif %}
+                        <div class="text-3xl">
 
-                    </button>
+                            🛡️
 
-                    <a
+                        </div>
 
-                        href="{% url 'home' %}"
+                        <p class="mt-3 text-sm text-slate-500">
 
-                        class="flex-1 text-center bg-gray-700 hover:bg-gray-800 text-white py-4 rounded-xl text-lg font-semibold rounded-xl">
+                            Verified Listing
 
-                        Back to Inventory
+                        </p>
 
-                    </a>
+                    </div>
+
+                    <div class="rounded-2xl bg-slate-50 p-6 text-center">
+
+                        <div class="text-3xl">
+
+                            ⚡
+
+                        </div>
+
+                        <p class="mt-3 text-sm text-slate-500">
+
+                            Instant Purchase
+
+                        </p>
+
+                    </div>
 
                 </div>
+
+            </div>
+
+            <div class="mt-12 grid md:grid-cols-2 gap-4">
+
+                <button
+
+                    id="purchaseBtn"
+
+                    onclick="purchaseVehicleLive({{ vehicle.id }})"
+
+                    class="rounded-xl bg-indigo-600 py-4 text-lg font-bold text-white transition hover:bg-indigo-700"
+
+                    {% if vehicle.quantity == 0 %}
+                    disabled
+                    {% endif %}>
+
+                    {% if vehicle.quantity == 0 %}
+
+                        Out of Stock
+
+                    {% else %}
+
+                        Purchase Vehicle
+
+                    {% endif %}
+
+                </button>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="rounded-xl bg-slate-800 py-4 text-center text-lg font-bold text-white transition hover:bg-black">
+
+                    Back to Inventory
+
+                </a>
 
             </div>
 
@@ -194,15 +239,13 @@
 
     </div>
 
-</div>
+</section>
 
 <script>
 
 async function purchaseVehicleLive(id){
 
-    if(!confirm("Purchase this vehicle?")){
-        return;
-    }
+    if(!confirm("Purchase this vehicle?")) return;
 
     const btn=document.getElementById("purchaseBtn");
 
@@ -212,25 +255,19 @@ async function purchaseVehicleLive(id){
 
     try{
 
-        const response=await fetch(
+        const response=await fetch("/api/vehicles/"+id+"/purchase/",{
 
-            "/api/vehicles/"+id+"/purchase/",
+            method:"POST",
 
-            {
+            headers:{
 
-                method:"POST",
+                "Authorization":"Bearer "+localStorage.getItem("access"),
 
-                headers:{
-
-                    "Authorization":"Bearer "+localStorage.getItem("access"),
-
-                    "Content-Type":"application/json"
-
-                }
+                "Content-Type":"application/json"
 
             }
 
-        );
+        });
 
         const data=await response.json();
 
@@ -240,9 +277,7 @@ async function purchaseVehicleLive(id){
 
             let badge=document.getElementById("stockBadge");
 
-            let quantity=parseInt(stock.innerHTML);
-
-            quantity--;
+            let quantity=parseInt(stock.innerHTML)-1;
 
             stock.innerHTML=quantity;
 
@@ -250,11 +285,11 @@ async function purchaseVehicleLive(id){
 
                 badge.innerHTML="Out of Stock";
 
-                badge.className="bg-red-100 text-red-700 px-3 py-1 rounded-full";
+                badge.className="rounded-full bg-red-100 text-red-700 px-5 py-2 text-sm font-semibold";
 
                 btn.innerHTML="Out of Stock";
 
-                btn.className="flex-1 bg-red-600 text-white py-4 rounded-xl text-lg font-semibold";
+                btn.className="rounded-xl bg-red-600 py-4 text-lg font-bold text-white";
 
                 btn.disabled=true;
 
@@ -264,7 +299,7 @@ async function purchaseVehicleLive(id){
 
                 badge.innerHTML="Low Stock";
 
-                badge.className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full";
+                badge.className="rounded-full bg-amber-100 text-amber-700 px-5 py-2 text-sm font-semibold";
 
                 btn.innerHTML="Purchase Vehicle";
 
@@ -274,9 +309,9 @@ async function purchaseVehicleLive(id){
 
             else{
 
-                badge.innerHTML="In Stock";
+                badge.innerHTML="Available";
 
-                badge.className="bg-green-100 text-green-700 px-3 py-1 rounded-full";
+                badge.className="rounded-full bg-emerald-100 text-emerald-700 px-5 py-2 text-sm font-semibold";
 
                 btn.innerHTML="Purchase Vehicle";
 
@@ -293,13 +328,14 @@ async function purchaseVehicleLive(id){
             alert(data.error || "Purchase failed.");
 
             btn.innerHTML="Purchase Vehicle";
+
             btn.disabled=false;
 
         }
 
     }
 
-    catch(error){
+    catch{
 
         alert("Network error.");
 

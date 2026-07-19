@@ -1,75 +1,281 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
 
-<div class="max-w-7xl mx-auto px-6 py-10">
-  <div class="flex justify-between items-center mb-10">
+<div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between">
+
     <div>
-      <h1 class="text-5xl font-bold text-gray-800">DriveHub Dashboard</h1>
-      <p class="text-gray-500 mt-2">Dealership analytics and inventory overview.</p>
+
+        <h1 class="text-5xl font-extrabold text-slate-800">
+
+            Dashboard
+
+        </h1>
+
+        <p class="mt-2 text-slate-500">
+
+            Welcome back. Here's what's happening in your dealership today.
+
+        </p>
+
     </div>
-    <a href="{% url 'add-vehicle' %}" class="bg-green-600 text-white px-6 py-3 rounded-xl">+ Add Vehicle</a>
-  </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">🚗</div><p>Total Vehicles</p><h2 class="text-4xl font-bold">{{ total_vehicles }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">💰</div><p>Inventory Value</p><h2 class="text-3xl font-bold">₹{{ inventory_value }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">🛒</div><p>Total Sales</p><h2 class="text-4xl font-bold">{{ total_sales }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">💵</div><p>Total Revenue</p><h2 class="text-3xl font-bold">₹{{ total_revenue }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">📅</div><p>Today's Sales</p><h2 class="text-4xl font-bold">{{ todays_sales }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">📂</div><p>Categories</p><h2 class="text-4xl font-bold">{{ total_categories }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">⚠️</div><p>Out of Stock</p><h2 class="text-4xl font-bold">{{ out_of_stock }}</h2></div>
-    <div class="bg-white rounded-2xl shadow p-6">
-      <div class="text-4xl">🏆</div><p>Best Seller</p>
-      {% if best_selling_vehicle %}
-      <h2 class="font-bold">{{ best_selling_vehicle.vehicle__make }} {{ best_selling_vehicle.vehicle__model }}</h2>
-      <p>{{ best_selling_vehicle.total_sold }} Sold</p>
-      {% else %}<h2>No Sales Yet</h2>{% endif %}
+    <a href="{% url 'add-vehicle' %}"
+       class="mt-6 md:mt-0 rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700">
+
+        + Add Vehicle
+
+    </a>
+
+</div>
+
+<div class="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+
+    <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
+
+        <div class="text-5xl">🚗</div>
+
+        <p class="mt-6 text-slate-500">
+
+            Total Vehicles
+
+        </p>
+
+        <h2 class="mt-2 text-5xl font-extrabold text-indigo-700">
+
+            {{ total_vehicles }}
+
+        </h2>
+
     </div>
-  </div>
 
-  <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-    <div class="bg-indigo-700 text-white px-6 py-4"><h2 class="text-2xl font-semibold">Recent Sales</h2></div>
-    <table class="min-w-full">
-      <thead class="bg-gray-100">
-      <tr><th class="px-4 py-3 text-left">Vehicle</th><th>Price</th><th>Qty</th><th>Total</th><th>Date</th></tr>
-      </thead>
-      <tbody>
-      {% for sale in recent_sales %}
-      <tr class="border-b">
-        <td class="px-4 py-3">{{ sale.vehicle.make }} {{ sale.vehicle.model }}</td>
-        <td>₹{{ sale.selling_price }}</td>
-        <td>{{ sale.quantity }}</td>
-        <td>₹{{ sale.total_amount }}</td>
-        <td>{{ sale.sold_at|date:"d M Y H:i" }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="5" class="text-center py-8">No sales recorded.</td></tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
 
-  <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-    <div class="bg-blue-700 text-white px-6 py-4"><h2 class="text-2xl font-semibold">Vehicle Inventory</h2></div>
-    <table class="min-w-full">
-      <thead class="bg-gray-100">
-      <tr><th class="px-4 py-3">Vehicle</th><th>Category</th><th>Price</th><th>Stock</th></tr>
-      </thead>
-      <tbody>
-      {% for vehicle in vehicles %}
-      <tr class="border-b">
-        <td class="px-4 py-3">{{ vehicle.make }} {{ vehicle.model }}</td>
-        <td>{{ vehicle.category }}</td>
-        <td>₹{{ vehicle.price }}</td>
-        <td>{{ vehicle.quantity }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="4" class="text-center py-8">No vehicles found.</td></tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        <div class="text-5xl">📦</div>
+
+        <p class="mt-6 text-slate-500">
+
+            Inventory
+
+        </p>
+
+        <h2 class="mt-2 text-5xl font-extrabold text-emerald-600">
+
+            {{ total_stock }}
+
+        </h2>
+
+    </div>
+
+    <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
+
+        <div class="text-5xl">💰</div>
+
+        <p class="mt-6 text-slate-500">
+
+            Revenue
+
+        </p>
+
+        <h2 class="mt-2 text-3xl font-extrabold text-slate-800">
+
+            ₹{{ total_revenue }}
+
+        </h2>
+
+    </div>
+
+    <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
+
+        <div class="text-5xl">⚠️</div>
+
+        <p class="mt-6 text-slate-500">
+
+            Low Stock
+
+        </p>
+
+        <h2 class="mt-2 text-5xl font-extrabold text-red-500">
+
+            {{ low_stock }}
+
+        </h2>
+
+    </div>
+
+</div>
+
+<div class="mt-12 rounded-3xl bg-white shadow-lg overflow-hidden">
+
+    <div class="border-b border-slate-200 px-8 py-6">
+
+        <h2 class="text-2xl font-bold text-slate-800">
+
+            Vehicle Inventory
+
+        </h2>
+
+    </div>
+
+    <div class="overflow-x-auto">
+
+        <table class="min-w-full">
+
+            <thead class="bg-slate-100">
+
+                <tr>
+
+                    <th class="px-6 py-4 text-left font-bold text-slate-700">Vehicle</th>
+
+                    <th class="px-6 py-4 text-left font-bold text-slate-700">Category</th>
+
+                    <th class="px-6 py-4 text-left font-bold text-slate-700">Price</th>
+
+                    <th class="px-6 py-4 text-left font-bold text-slate-700">Stock</th>
+
+                    <th class="px-6 py-4 text-center font-bold text-slate-700">Status</th>
+
+                    <th class="px-6 py-4 text-center font-bold text-slate-700">Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for vehicle in vehicles %}
+
+                <tr class="border-b hover:bg-slate-50">
+
+                    <td class="px-6 py-5">
+
+                        <div class="flex items-center gap-4">
+
+                            {% if vehicle.image %}
+
+                            <img src="{{ vehicle.image.url }}"
+                                 class="h-16 w-24 rounded-xl object-cover">
+
+                            {% else %}
+
+                            <img src="{% static 'images/no-image.png' %}"
+                                 class="h-16 w-24 rounded-xl object-cover">
+
+                            {% endif %}
+
+                            <div>
+
+                                <h3 class="font-bold text-slate-800">
+
+                                    {{ vehicle.make }}
+
+                                </h3>
+
+                                <p class="text-sm text-slate-500">
+
+                                    {{ vehicle.model }}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td class="px-6 py-5">
+
+                        {{ vehicle.category }}
+
+                    </td>
+
+                    <td class="px-6 py-5 font-semibold">
+
+                        ₹{{ vehicle.price }}
+
+                    </td>
+
+                    <td class="px-6 py-5">
+
+                        {{ vehicle.quantity }}
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {% if vehicle.quantity == 0 %}
+
+                        <span class="rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-600">
+
+                            Out of Stock
+
+                        </span>
+
+                        {% elif vehicle.quantity <= 5 %}
+
+                        <span class="rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-700">
+
+                            Low Stock
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+
+                            Available
+
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="px-6 py-5">
+
+                        <div class="flex justify-center gap-3">
+
+                            <a href="{% url 'edit-vehicle' vehicle.id %}"
+                               class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+
+                                Edit
+
+                            </a>
+
+                            <a href="{% url 'vehicle-details' vehicle.id %}"
+                               class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-black">
+
+                                View
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6" class="py-16 text-center text-slate-500">
+
+                        No vehicles available.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>
 
 {% endblock %}
