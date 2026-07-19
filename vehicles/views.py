@@ -1,9 +1,15 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Vehicle
 from .serializers import VehicleSerializer
 
+
+# ==========================
+# Vehicle CRUD
+# ==========================
 
 class VehicleListCreateView(generics.ListCreateAPIView):
 
@@ -25,6 +31,10 @@ class VehicleDeleteView(generics.DestroyAPIView):
     serializer_class = VehicleSerializer
     permission_classes = [IsAdminUser]
 
+
+# ==========================
+# Vehicle Search
+# ==========================
 
 class VehicleSearchView(generics.ListAPIView):
 
@@ -58,3 +68,83 @@ class VehicleSearchView(generics.ListAPIView):
             queryset = queryset.filter(price__lte=max_price)
 
         return queryset
+
+
+# ==========================
+# Purchase Vehicle
+# ==========================
+
+class PurchaseVehicleView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        try:
+            vehicle = Vehicle.objects.get(pk=pk)
+
+        except Vehicle.DoesNotExist:
+
+            return Response(
+                {"error": "Vehicle not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if vehicle.quantity <= 0:
+
+            return Response(
+                {"error": "Vehicle is out of stock."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        vehicle.quantity -= 1
+        vehicle.save()
+
+        return Response(
+            {
+                "message": "Vehicle purchased successfully.",
+                "remaining_quantity": vehicle.quantity
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+# ==========================
+# Restock Vehicle
+# ==========================
+
+class RestockVehicleView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def post(self, request, pk):
+
+        try:
+            vehicle = Vehicle.objects.get(pk=pk)
+
+        except Vehicle.DoesNotExist:
+
+            return Response(
+                {"error": "Vehicle not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        quantity = int(request.data.get("quantity", 0))
+
+        if quantity <= 0:
+
+            return Response(
+                {"error": "Quantity must be greater than zero."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        vehicle.quantity += quantity
+        vehicle.save()
+
+        return Response(
+            {
+                "message": "Vehicle restocked successfully.",
+                "current_quantity": vehicle.quantity
+            },
+            status=status.HTTP_200_OK
+        )

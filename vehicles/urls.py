@@ -5,6 +5,8 @@ from .views import (
     VehicleUpdateView,
     VehicleDeleteView,
     VehicleSearchView,
+    PurchaseVehicleView,
+    RestockVehicleView,
 )
 
 urlpatterns = [
@@ -33,4 +35,15 @@ urlpatterns = [
         name="vehicle-delete"
     ),
 
+    path(
+        "<int:pk>/purchase/",
+        PurchaseVehicleView.as_view(),
+        name="vehicle-purchase"
+    ),
+
+    path(
+        "<int:pk>/restock/",
+        RestockVehicleView.as_view(),
+        name="vehicle-restock"
+    ),
 ]
