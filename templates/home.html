@@ -4,209 +4,138 @@
 
 <section class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
 
-<div class="max-w-7xl mx-auto py-24">
+    <div class="max-w-7xl mx-auto py-20 px-8">
 
-<h1 class="text-6xl font-bold">
+        <h1 class="text-5xl font-bold">
 
-Find Your Perfect Vehicle
+            Find Your Perfect Vehicle
 
-</h1>
+        </h1>
 
-<p class="mt-6 text-xl">
+        <p class="mt-4 text-xl">
 
-Search thousands of verified vehicles across multiple categories.
+            Browse vehicles from our dealership inventory.
 
-</p>
+        </p>
 
-<div class="mt-10 bg-white rounded-xl p-6 shadow-xl">
+        <form method="GET" class="mt-10 bg-white rounded-xl p-6 shadow-xl">
 
-<div class="grid md:grid-cols-5 gap-4">
+            <div class="grid md:grid-cols-3 gap-4">
 
-<input
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search Make or Model"
+                    class="border rounded-lg p-3 text-black">
 
-type="text"
+                <select
+                    name="category"
+                    class="border rounded-lg p-3 text-black">
 
-placeholder="Make"
+                    <option value="">All Categories</option>
 
-class="border rounded-lg p-3 text-black">
+                    {% for category in categories %}
 
-<input
+                    <option
+                        value="{{ category }}"
+                        {% if selected_category == category %}
+                        selected
+                        {% endif %}
+                    >
 
-type="text"
+                        {{ category }}
 
-placeholder="Model"
+                    </option>
 
-class="border rounded-lg p-3 text-black">
+                    {% endfor %}
 
-<select class="border rounded-lg p-3 text-black">
+                </select>
 
-<option>Category</option>
+                <button
+                    type="submit"
+                    class="bg-blue-700 text-white rounded-lg">
 
-<option>Sedan</option>
+                    Search
 
-<option>SUV</option>
+                </button>
 
-<option>Truck</option>
+            </div>
 
-<option>Sports</option>
+        </form>
 
-</select>
-
-<input
-
-type="number"
-
-placeholder="Maximum Price"
-
-class="border rounded-lg p-3 text-black">
-
-<button
-
-class="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold">
-
-Search
-
-</button>
-
-</div>
-
-</div>
-
-</div>
+    </div>
 
 </section>
 
-<section class="max-w-7xl mx-auto py-16">
+<section class="max-w-7xl mx-auto py-16 px-8">
 
-<h2 class="text-4xl font-bold">
+    <h2 class="text-4xl font-bold mb-10">
 
-Featured Vehicles
+        Available Vehicles
 
-</h2>
+    </h2>
 
-<div class="grid md:grid-cols-3 gap-8 mt-10">
+    {% if vehicles %}
 
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="grid md:grid-cols-3 gap-8">
 
-<img
+        {% for vehicle in vehicles %}
 
-src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8"
+        <div class="bg-white rounded-xl shadow-lg p-6">
 
-class="h-56 w-full object-cover">
+            <h3 class="text-2xl font-bold">
 
-<div class="p-6">
+                {{ vehicle.make }} {{ vehicle.model }}
 
-<h3 class="text-2xl font-bold">
+            </h3>
 
-Ford Mustang
+            <p class="text-gray-500 mt-2">
 
-</h3>
+                {{ vehicle.category }}
 
-<p class="text-gray-500">
+            </p>
 
-Sports Car
+            <p class="mt-4 text-3xl text-blue-700 font-bold">
 
-</p>
+                ₹ {{ vehicle.price }}
 
-<p class="mt-4 text-3xl text-blue-700 font-bold">
+            </p>
 
-₹ 34,50,000
+            <p class="mt-3">
 
-</p>
+                Quantity:
+                <strong>{{ vehicle.quantity }}</strong>
 
-<button
+            </p>
 
-class="mt-6 bg-blue-700 text-white px-6 py-3 rounded-lg w-full">
+            <a
+                href="{% url 'vehicle-details' vehicle.id %}"
+                class="block text-center mt-6 bg-blue-700 text-white py-3 rounded-lg">
 
-Purchase
+                View Details
 
-</button>
+            </a>
 
-</div>
+        </div>
 
-</div>
+        {% endfor %}
 
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    </div>
 
-<img
+    {% else %}
 
-src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d"
+    <div class="bg-white rounded-xl shadow p-10 text-center">
 
-class="h-56 w-full object-cover">
+        <h3 class="text-2xl font-bold">
 
-<div class="p-6">
+            No vehicles found.
 
-<h3 class="text-2xl font-bold">
+        </h3>
 
-BMW X5
+    </div>
 
-</h3>
-
-<p class="text-gray-500">
-
-SUV
-
-</p>
-
-<p class="mt-4 text-3xl text-blue-700 font-bold">
-
-₹ 74,00,000
-
-</p>
-
-<button
-
-class="mt-6 bg-blue-700 text-white px-6 py-3 rounded-lg w-full">
-
-Purchase
-
-</button>
-
-</div>
-
-</div>
-
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
-
-<img
-
-src="https://images.unsplash.com/photo-1503376780353-7e6692767b70"
-
-class="h-56 w-full object-cover">
-
-<div class="p-6">
-
-<h3 class="text-2xl font-bold">
-
-Mercedes C-Class
-
-</h3>
-
-<p class="text-gray-500">
-
-Luxury Sedan
-
-</p>
-
-<p class="mt-4 text-3xl text-blue-700 font-bold">
-
-₹ 61,00,000
-
-</p>
-
-<button
-
-class="mt-6 bg-blue-700 text-white px-6 py-3 rounded-lg w-full">
-
-Purchase
-
-</button>
-
-</div>
-
-</div>
-
-</div>
+    {% endif %}
 
 </section>
 

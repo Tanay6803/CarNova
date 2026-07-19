@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow rounded p-8">
+
+    <h1 class="text-3xl font-bold mb-8">
+
+        Edit Vehicle
+
+    </h1>
+
+    <form
+        id="editVehicleForm"
+        data-vehicle-id="{{ vehicle.id }}"
+        class="space-y-5">
+
+        <input
+            id="make"
+            type="text"
+            value="{{ vehicle.make }}"
+            class="w-full border rounded p-3"
+            required
+        >
+
+        <input
+            id="model"
+            type="text"
+            value="{{ vehicle.model }}"
+            class="w-full border rounded p-3"
+            required
+        >
+
+        <select
+            id="category"
+            class="w-full border rounded p-3">
+
+            <option {% if vehicle.category == "Sedan" %}selected{% endif %}>Sedan</option>
+            <option {% if vehicle.category == "SUV" %}selected{% endif %}>SUV</option>
+            <option {% if vehicle.category == "Hatchback" %}selected{% endif %}>Hatchback</option>
+            <option {% if vehicle.category == "Truck" %}selected{% endif %}>Truck</option>
+            <option {% if vehicle.category == "Luxury" %}selected{% endif %}>Luxury</option>
+            <option {% if vehicle.category == "Sports" %}selected{% endif %}>Sports</option>
+
+        </select>
+
+        <input
+            id="price"
+            type="number"
+            value="{{ vehicle.price }}"
+            class="w-full border rounded p-3"
+            required
+        >
+
+        <input
+            id="quantity"
+            type="number"
+            value="{{ vehicle.quantity }}"
+            class="w-full border rounded p-3"
+            required
+        >
+
+        <button
+            class="bg-blue-600 text-white px-6 py-3 rounded">
+
+            Update Vehicle
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

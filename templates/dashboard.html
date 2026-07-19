@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto mt-10 px-6">
+
+    <div class="flex justify-between items-center mb-8">
+
+        <h1 class="text-4xl font-bold">
+
+            Dashboard
+
+        </h1>
+
+        <button
+            id="logoutBtn"
+            class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded">
+
+            Logout
+
+        </button>
+
+    </div>
+
+    <div class="mb-8">
+
+        <a
+            href="{% url 'add-vehicle' %}"
+            class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded">
+
+            Add Vehicle
+
+        </a>
+
+    </div>
+
+    <div class="bg-white rounded-lg shadow overflow-x-auto">
+
+        <table class="w-full">
+
+            <thead class="bg-gray-200">
+
+                <tr>
+
+                    <th class="p-4 text-left">Make</th>
+
+                    <th class="p-4 text-left">Model</th>
+
+                    <th class="p-4 text-left">Category</th>
+
+                    <th class="p-4 text-left">Price</th>
+
+                    <th class="p-4 text-left">Stock</th>
+
+                    <th class="p-4 text-center">Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for vehicle in vehicles %}
+
+                <tr class="border-b hover:bg-gray-50">
+
+                    <td class="p-4">
+
+                        {{ vehicle.make }}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        {{ vehicle.model }}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        {{ vehicle.category }}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        ₹{{ vehicle.price }}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        {{ vehicle.quantity }}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        <div class="flex justify-center gap-3">
+
+                            <a
+                                href="{% url 'edit-vehicle' vehicle.id %}"
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+
+                                Edit
+
+                            </a>
+
+                            <button
+                                onclick="deleteVehicle({{ vehicle.id }})"
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+
+                                Delete
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center p-8 text-gray-500">
+
+                        No Vehicles Available
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
