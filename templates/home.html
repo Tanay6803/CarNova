@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
 
 <section class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
@@ -7,15 +9,11 @@
     <div class="max-w-7xl mx-auto py-20 px-8">
 
         <h1 class="text-5xl font-bold">
-
             Find Your Perfect Vehicle
-
         </h1>
 
         <p class="mt-4 text-xl">
-
             Browse vehicles from our dealership inventory.
-
         </p>
 
         <form method="GET" class="mt-10 bg-white rounded-xl p-6 shadow-xl">
@@ -27,11 +25,13 @@
                     name="search"
                     value="{{ search }}"
                     placeholder="Search Make or Model"
-                    class="border rounded-lg p-3 text-black">
+                    class="border rounded-lg p-3 text-black"
+                >
 
                 <select
                     name="category"
-                    class="border rounded-lg p-3 text-black">
+                    class="border rounded-lg p-3 text-black"
+                >
 
                     <option value="">All Categories</option>
 
@@ -39,13 +39,9 @@
 
                     <option
                         value="{{ category }}"
-                        {% if selected_category == category %}
-                        selected
-                        {% endif %}
+                        {% if selected_category == category %}selected{% endif %}
                     >
-
                         {{ category }}
-
                     </option>
 
                     {% endfor %}
@@ -54,10 +50,9 @@
 
                 <button
                     type="submit"
-                    class="bg-blue-700 text-white rounded-lg">
-
+                    class="bg-blue-700 hover:bg-blue-800 transition text-white rounded-lg"
+                >
                     Search
-
                 </button>
 
             </div>
@@ -71,51 +66,104 @@
 <section class="max-w-7xl mx-auto py-16 px-8">
 
     <h2 class="text-4xl font-bold mb-10">
-
         Available Vehicles
-
     </h2>
 
     {% if vehicles %}
 
-    <div class="grid md:grid-cols-3 gap-8">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
         {% for vehicle in vehicles %}
 
-        <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
 
-            <h3 class="text-2xl font-bold">
+            {% if vehicle.image %}
 
-                {{ vehicle.make }} {{ vehicle.model }}
+            <img
+                src="{{ vehicle.image.url }}"
+                alt="{{ vehicle.make }}"
+                class="w-full h-56 object-cover"
+            >
 
-            </h3>
+            {% else %}
 
-            <p class="text-gray-500 mt-2">
+            <img
+                src="{% static 'images/no-image.png' %}"
+                alt="No Image"
+                class="w-full h-56 object-cover"
+            >
 
-                {{ vehicle.category }}
+            {% endif %}
 
-            </p>
+            <div class="p-6">
 
-            <p class="mt-4 text-3xl text-blue-700 font-bold">
+                <div class="flex justify-between items-center">
 
-                ₹ {{ vehicle.price }}
+                    <h3 class="text-2xl font-bold">
 
-            </p>
+                        {{ vehicle.make }} {{ vehicle.model }}
 
-            <p class="mt-3">
+                    </h3>
 
-                Quantity:
-                <strong>{{ vehicle.quantity }}</strong>
+                    <span class="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">
 
-            </p>
+                        {{ vehicle.category }}
 
-            <a
-                href="{% url 'vehicle-details' vehicle.id %}"
-                class="block text-center mt-6 bg-blue-700 text-white py-3 rounded-lg">
+                    </span>
 
-                View Details
+                </div>
 
-            </a>
+                <p class="mt-5 text-3xl font-bold text-blue-700">
+
+                    ₹ {{ vehicle.price }}
+
+                </p>
+
+                <div class="mt-4">
+
+                    {% if vehicle.quantity == 0 %}
+
+                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+
+                        Out of Stock
+
+                    </span>
+
+                    {% elif vehicle.quantity <= 5 %}
+
+                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+
+                        Low Stock
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+
+                        In Stock
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <p class="mt-5 text-gray-600">
+
+                    Available:
+                    <strong>{{ vehicle.quantity }}</strong>
+
+                </p>
+
+                <a
+                    href="{% url 'vehicle-details' vehicle.id %}"
+                    class="block mt-6 text-center bg-blue-700 hover:bg-blue-800 transition text-white py-3 rounded-lg"
+                >
+                    View Details
+                </a>
+
+            </div>
 
         </div>
 
@@ -125,13 +173,19 @@
 
     {% else %}
 
-    <div class="bg-white rounded-xl shadow p-10 text-center">
+    <div class="bg-white rounded-xl shadow-lg p-12 text-center">
 
-        <h3 class="text-2xl font-bold">
+        <h3 class="text-3xl font-bold text-gray-700">
 
-            No vehicles found.
+            No vehicles found
 
         </h3>
+
+        <p class="mt-4 text-gray-500">
+
+            Try changing the search criteria.
+
+        </p>
 
     </div>
 

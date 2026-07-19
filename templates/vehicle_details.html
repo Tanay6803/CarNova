@@ -1,104 +1,153 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
 
-<div class="max-w-6xl mx-auto mt-12 bg-white shadow-xl rounded-xl p-10">
+<div class="max-w-7xl mx-auto mt-12 px-6">
 
-    <div class="flex justify-between items-center">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
 
-        <div>
+        <div class="grid lg:grid-cols-2">
 
-            <h1 class="text-4xl font-bold">
+            <!-- Vehicle Image -->
 
-                {{ vehicle.make }} {{ vehicle.model }}
+            <div class="bg-gray-100 flex items-center justify-center p-8">
 
-            </h1>
+                {% if vehicle.image %}
 
-            <p class="text-gray-500 mt-2">
+                <img
+                    src="{{ vehicle.image.url }}"
+                    alt="{{ vehicle.make }} {{ vehicle.model }}"
+                    class="w-full h-[500px] object-cover rounded-xl shadow-lg"
+                >
 
-                {{ vehicle.category }}
+                {% else %}
 
-            </p>
+                <img
+                    src="{% static 'images/no-image.png' %}"
+                    alt="No Image Available"
+                    class="w-full h-[500px] object-cover rounded-xl shadow-lg"
+                >
 
-        </div>
-
-        <a
-            href="{% url 'home' %}"
-            class="bg-gray-700 hover:bg-gray-800 text-white px-5 py-2 rounded">
-
-            Back
-
-        </a>
-
-    </div>
-
-    <div class="mt-10 grid md:grid-cols-2 gap-12">
-
-        <div>
-
-            <h2 class="text-2xl font-semibold mb-6">
-
-                Vehicle Information
-
-            </h2>
-
-            <div class="space-y-4">
-
-                <p>
-
-                    <strong>Make :</strong>
-
-                    {{ vehicle.make }}
-
-                </p>
-
-                <p>
-
-                    <strong>Model :</strong>
-
-                    {{ vehicle.model }}
-
-                </p>
-
-                <p>
-
-                    <strong>Category :</strong>
-
-                    {{ vehicle.category }}
-
-                </p>
-
-                <p>
-
-                    <strong>Price :</strong>
-
-                    ₹{{ vehicle.price }}
-
-                </p>
-
-                <p>
-
-                    <strong>Available Stock :</strong>
-
-                    {{ vehicle.quantity }}
-
-                </p>
+                {% endif %}
 
             </div>
 
-        </div>
+            <!-- Vehicle Details -->
 
-        <div class="flex items-center justify-center">
+            <div class="p-10 flex flex-col justify-between">
 
-            <button
+                <div>
 
-                onclick="purchaseVehicle({{ vehicle.id }})"
+                    <span class="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-4">
 
-                class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg">
+                        {{ vehicle.category }}
 
-                Purchase Vehicle
+                    </span>
 
-            </button>
+                    <h1 class="text-5xl font-bold text-gray-800">
+
+                        {{ vehicle.make }}
+
+                    </h1>
+
+                    <h2 class="text-3xl text-gray-500 mt-2">
+
+                        {{ vehicle.model }}
+
+                    </h2>
+
+                    <div class="mt-8 space-y-5 text-lg">
+
+                        <div class="flex justify-between border-b pb-3">
+
+                            <span class="font-semibold">Price</span>
+
+                            <span class="text-green-700 font-bold">
+
+                                ₹ {{ vehicle.price }}
+
+                            </span>
+
+                        </div>
+
+                        <div class="flex justify-between border-b pb-3">
+
+                            <span class="font-semibold">Category</span>
+
+                            <span>{{ vehicle.category }}</span>
+
+                        </div>
+
+                        <div class="flex justify-between border-b pb-3">
+
+                            <span class="font-semibold">Available Stock</span>
+
+                            <span>{{ vehicle.quantity }}</span>
+
+                        </div>
+
+                        <div class="flex justify-between">
+
+                            <span class="font-semibold">Status</span>
+
+                            {% if vehicle.quantity == 0 %}
+
+                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+
+                                Out of Stock
+
+                            </span>
+
+                            {% elif vehicle.quantity <= 5 %}
+
+                            <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+
+                                Low Stock
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+
+                                In Stock
+
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-12 flex flex-col sm:flex-row gap-4">
+
+                    <button
+                        onclick="purchaseVehicle({{ vehicle.id }})"
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl text-lg font-semibold transition"
+                        {% if vehicle.quantity == 0 %}disabled{% endif %}
+                    >
+                        {% if vehicle.quantity == 0 %}
+                            Out of Stock
+                        {% else %}
+                            Purchase Vehicle
+                        {% endif %}
+                    </button>
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="flex-1 text-center bg-gray-700 hover:bg-gray-800 text-white py-4 rounded-xl text-lg font-semibold transition"
+                    >
+                        Back to Inventory
+                    </a>
+
+                </div>
+
+            </div>
 
         </div>
 

@@ -1,9 +1,14 @@
 from django.db.models import Q
 
 from rest_framework import generics, status
+from rest_framework.parsers import (
+    JSONParser,
+    MultiPartParser,
+    FormParser,
+)
 from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly,
     IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
 
@@ -17,19 +22,31 @@ class VehicleListCreateView(generics.ListCreateAPIView):
     serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    parser_classes = [
+        JSONParser,
+        MultiPartParser,
+        FormParser,
+    ]
+
 
 class VehicleUpdateView(generics.UpdateAPIView):
 
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
+
+    parser_classes = [
+        JSONParser,
+        MultiPartParser,
+        FormParser,
+    ]
 
 
 class VehicleDeleteView(generics.DestroyAPIView):
 
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
 
 class VehicleSearchView(generics.ListAPIView):
@@ -59,8 +76,11 @@ class PurchaseVehicleView(generics.GenericAPIView):
         vehicle = self.get_object()
 
         if vehicle.quantity <= 0:
+
             return Response(
-                {"error": "Vehicle Out of Stock"},
+                {
+                    "error": "Vehicle Out of Stock"
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -68,7 +88,9 @@ class PurchaseVehicleView(generics.GenericAPIView):
         vehicle.save()
 
         return Response(
-            {"message": "Vehicle Purchased Successfully"}
+            {
+                "message": "Vehicle Purchased Successfully"
+            }
         )
 
 
@@ -80,20 +102,44 @@ class RestockVehicleView(generics.GenericAPIView):
 
     def post(self, request, pk):
 
-        # Only admins/staff may restock
         if not request.user.is_staff:
+
             return Response(
-                {"detail": "You do not have permission to perform this action."},
-                status=status.HTTP_403_FORBIDDEN,
+                {
+                    "detail": "You do not have permission to perform this action."
+                },
+                status=status.HTTP_403_FORBIDDEN
             )
 
         vehicle = self.get_object()
 
-        quantity = int(request.data.get("quantity", 1))
+        try:
+
+            quantity = int(request.data.get("quantity", 1))
+
+        except (TypeError, ValueError):
+
+            return Response(
+                {
+                    "error": "Invalid quantity."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if quantity <= 0:
+
+            return Response(
+                {
+                    "error": "Quantity must be greater than zero."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         vehicle.quantity += quantity
         vehicle.save()
 
         return Response(
-            {"message": "Vehicle Restocked Successfully"}
+            {
+                "message": "Vehicle Restocked Successfully"
+            }
         )
