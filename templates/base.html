@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>DriveHub</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+</head>
+
+<body class="bg-gray-100">
+
+<nav class="bg-white shadow">
+
+    <div class="max-w-7xl mx-auto px-8">
+
+        <div class="flex justify-between items-center h-16">
+
+            <div class="text-3xl font-bold text-blue-700">
+
+                DriveHub
+
+            </div>
+
+            <div class="space-x-8">
+
+                <a href="/"
+                   class="hover:text-blue-600">
+
+                    Home
+
+                </a>
+
+                <a href="/login/"
+                   class="hover:text-blue-600">
+
+                    Login
+
+                </a>
+
+                <a href="/register/"
+                   class="hover:text-blue-600">
+
+                    Register
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div>
+
+    {% block content %}
+
+    {% endblock %}
+
+</div>
+
+<script src="{% static 'js/auth.js' %}"></script>
+
+<script src="{% static 'js/vehicle.js' %}"></script>
+
+<script src="{% static 'js/inventory.js' %}"></script>
+
+</body>
+
+</html>

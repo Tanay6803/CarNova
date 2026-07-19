@@ -1,99 +1,66 @@
+from django.db.models import Q
+
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated,
+)
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import Vehicle
 from .serializers import VehicleSerializer
 
 
-# ==========================
-# Vehicle CRUD
-# ==========================
-
 class VehicleListCreateView(generics.ListCreateAPIView):
 
+    queryset = Vehicle.objects.all().order_by("-created_at")
+    serializer_class = VehicleSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class VehicleUpdateView(generics.UpdateAPIView):
+
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class VehicleUpdateView(generics.RetrieveUpdateAPIView):
-
-    queryset = Vehicle.objects.all()
-    serializer_class = VehicleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class VehicleDeleteView(generics.DestroyAPIView):
 
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-
-# ==========================
-# Vehicle Search
-# ==========================
 
 class VehicleSearchView(generics.ListAPIView):
 
     serializer_class = VehicleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
 
-        queryset = Vehicle.objects.all()
+        query = self.request.GET.get("q", "")
 
-        make = self.request.GET.get("make")
-        model = self.request.GET.get("model")
-        category = self.request.GET.get("category")
-
-        min_price = self.request.GET.get("min_price")
-        max_price = self.request.GET.get("max_price")
-
-        if make:
-            queryset = queryset.filter(make__icontains=make)
-
-        if model:
-            queryset = queryset.filter(model__icontains=model)
-
-        if category:
-            queryset = queryset.filter(category__icontains=category)
-
-        if min_price:
-            queryset = queryset.filter(price__gte=min_price)
-
-        if max_price:
-            queryset = queryset.filter(price__lte=max_price)
-
-        return queryset
+        return Vehicle.objects.filter(
+            Q(make__icontains=query) |
+            Q(model__icontains=query) |
+            Q(category__icontains=query)
+        ).order_by("-created_at")
 
 
-# ==========================
-# Purchase Vehicle
-# ==========================
+class PurchaseVehicleView(generics.GenericAPIView):
 
-class PurchaseVehicleView(APIView):
-
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
 
-        try:
-            vehicle = Vehicle.objects.get(pk=pk)
-
-        except Vehicle.DoesNotExist:
-
-            return Response(
-                {"error": "Vehicle not found."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        vehicle = self.get_object()
 
         if vehicle.quantity <= 0:
-
             return Response(
-                {"error": "Vehicle is out of stock."},
+                {"error": "Vehicle Out of Stock"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -101,50 +68,32 @@ class PurchaseVehicleView(APIView):
         vehicle.save()
 
         return Response(
-            {
-                "message": "Vehicle purchased successfully.",
-                "remaining_quantity": vehicle.quantity
-            },
-            status=status.HTTP_200_OK
+            {"message": "Vehicle Purchased Successfully"}
         )
 
 
-# ==========================
-# Restock Vehicle
-# ==========================
+class RestockVehicleView(generics.GenericAPIView):
 
-class RestockVehicleView(APIView):
-
-    permission_classes = [IsAdminUser]
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
 
-        try:
-            vehicle = Vehicle.objects.get(pk=pk)
-
-        except Vehicle.DoesNotExist:
-
+        # Only admins/staff may restock
+        if not request.user.is_staff:
             return Response(
-                {"error": "Vehicle not found."},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
-        quantity = int(request.data.get("quantity", 0))
+        vehicle = self.get_object()
 
-        if quantity <= 0:
-
-            return Response(
-                {"error": "Quantity must be greater than zero."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        quantity = int(request.data.get("quantity", 1))
 
         vehicle.quantity += quantity
         vehicle.save()
 
         return Response(
-            {
-                "message": "Vehicle restocked successfully.",
-                "current_quantity": vehicle.quantity
-            },
-            status=status.HTTP_200_OK
+            {"message": "Vehicle Restocked Successfully"}
         )
