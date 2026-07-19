@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum
 from django.utils import timezone
 
 from vehicles.models import Vehicle, Sale
@@ -77,7 +77,17 @@ def dashboard(request):
     vehicles = Vehicle.objects.all().order_by("-created_at")
     sales = Sale.objects.select_related("vehicle").order_by("-sold_at")
 
+    # Dashboard Statistics
     total_vehicles = vehicles.count()
+
+    inventory = vehicles.aggregate(
+        total=Sum("quantity")
+    )["total"] or 0
+
+    low_stock = vehicles.filter(
+        quantity__gt=0,
+        quantity__lte=5
+    ).count()
 
     inventory_value = sum(
         vehicle.price * vehicle.quantity
@@ -128,10 +138,15 @@ def dashboard(request):
         {
             "vehicles": vehicles,
             "recent_sales": recent_sales,
+
             "total_vehicles": total_vehicles,
+            "inventory": inventory,
+            "low_stock": low_stock,
+
             "inventory_value": inventory_value,
             "total_categories": total_categories,
             "out_of_stock": out_of_stock,
+
             "total_sales": total_sales,
             "total_revenue": total_revenue,
             "todays_sales": todays_sales,

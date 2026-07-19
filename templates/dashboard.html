@@ -32,6 +32,7 @@
 
 <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
 
+    <!-- Total Vehicles -->
     <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
 
         <div class="text-5xl">🚗</div>
@@ -50,6 +51,7 @@
 
     </div>
 
+    <!-- Inventory -->
     <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
 
         <div class="text-5xl">📦</div>
@@ -62,12 +64,13 @@
 
         <h2 class="mt-2 text-5xl font-extrabold text-emerald-600">
 
-            {{ total_stock }}
+            {{ inventory }}
 
         </h2>
 
     </div>
 
+    <!-- Revenue -->
     <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
 
         <div class="text-5xl">💰</div>
@@ -86,6 +89,7 @@
 
     </div>
 
+    <!-- Low Stock -->
     <div class="rounded-3xl bg-white p-8 shadow-lg transition hover:-translate-y-2 hover:shadow-xl">
 
         <div class="text-5xl">⚠️</div>
@@ -127,15 +131,10 @@
                 <tr>
 
                     <th class="px-6 py-4 text-left font-bold text-slate-700">Vehicle</th>
-
                     <th class="px-6 py-4 text-left font-bold text-slate-700">Category</th>
-
                     <th class="px-6 py-4 text-left font-bold text-slate-700">Price</th>
-
                     <th class="px-6 py-4 text-left font-bold text-slate-700">Stock</th>
-
                     <th class="px-6 py-4 text-center font-bold text-slate-700">Status</th>
-
                     <th class="px-6 py-4 text-center font-bold text-slate-700">Actions</th>
 
                 </tr>
