@@ -1,353 +1,75 @@
 {% extends "base.html" %}
-
 {% load static %}
-
 {% block content %}
 
 <div class="max-w-7xl mx-auto px-6 py-10">
-
-    <!-- Header -->
-
-    <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-10">
-
-        <div>
-
-            <h1 class="text-5xl font-bold text-gray-800">
-
-                DriveHub Dashboard
-
-            </h1>
-
-            <p class="text-gray-500 mt-3 text-lg">
-
-                Monitor and manage your dealership inventory.
-
-            </p>
-
-        </div>
-
-        <a
-            href="{% url 'add-vehicle' %}"
-            class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition duration-300">
-
-            + Add Vehicle
-
-        </a>
-
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="text-5xl font-bold text-gray-800">DriveHub Dashboard</h1>
+      <p class="text-gray-500 mt-2">Dealership analytics and inventory overview.</p>
     </div>
+    <a href="{% url 'add-vehicle' %}" class="bg-green-600 text-white px-6 py-3 rounded-xl">+ Add Vehicle</a>
+  </div>
 
-    <!-- Analytics -->
-
-    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-
-        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
-
-            <div class="text-5xl">
-                🚗
-            </div>
-
-            <p class="mt-4 text-gray-500">
-
-                Total Vehicles
-
-            </p>
-
-            <h2 class="text-4xl font-bold text-blue-700 mt-2">
-
-                {{ total_vehicles }}
-
-            </h2>
-
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
-
-            <div class="text-5xl">
-                💰
-            </div>
-
-            <p class="mt-4 text-gray-500">
-
-                Inventory Value
-
-            </p>
-
-            <h2 class="text-3xl font-bold text-green-600 mt-2">
-
-                ₹{{ inventory_value }}
-
-            </h2>
-
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
-
-            <div class="text-5xl">
-                📂
-            </div>
-
-            <p class="mt-4 text-gray-500">
-
-                Categories
-
-            </p>
-
-            <h2 class="text-4xl font-bold text-purple-600 mt-2">
-
-                {{ total_categories }}
-
-            </h2>
-
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
-
-            <div class="text-5xl">
-                ⚠️
-            </div>
-
-            <p class="mt-4 text-gray-500">
-
-                Out of Stock
-
-            </p>
-
-            <h2 class="text-4xl font-bold text-red-600 mt-2">
-
-                {{ out_of_stock }}
-
-            </h2>
-
-        </div>
-
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">🚗</div><p>Total Vehicles</p><h2 class="text-4xl font-bold">{{ total_vehicles }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">💰</div><p>Inventory Value</p><h2 class="text-3xl font-bold">₹{{ inventory_value }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">🛒</div><p>Total Sales</p><h2 class="text-4xl font-bold">{{ total_sales }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">💵</div><p>Total Revenue</p><h2 class="text-3xl font-bold">₹{{ total_revenue }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">📅</div><p>Today's Sales</p><h2 class="text-4xl font-bold">{{ todays_sales }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">📂</div><p>Categories</p><h2 class="text-4xl font-bold">{{ total_categories }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6"><div class="text-4xl">⚠️</div><p>Out of Stock</p><h2 class="text-4xl font-bold">{{ out_of_stock }}</h2></div>
+    <div class="bg-white rounded-2xl shadow p-6">
+      <div class="text-4xl">🏆</div><p>Best Seller</p>
+      {% if best_selling_vehicle %}
+      <h2 class="font-bold">{{ best_selling_vehicle.vehicle__make }} {{ best_selling_vehicle.vehicle__model }}</h2>
+      <p>{{ best_selling_vehicle.total_sold }} Sold</p>
+      {% else %}<h2>No Sales Yet</h2>{% endif %}
     </div>
-
-    <!-- Inventory Table -->
-
-    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-
-        <div class="bg-gradient-to-r from-blue-700 to-indigo-700 px-8 py-5 text-white flex justify-between items-center">
-
-            <div>
-
-                <h2 class="text-2xl font-semibold">
-
-                    Vehicle Inventory
-
-                </h2>
-
-                <p class="text-blue-100 mt-1">
-
-                    {{ vehicles|length }} vehicle{{ vehicles|length|pluralize }} currently listed
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="overflow-x-auto max-h-[700px]">
-
-            <table class="min-w-full">
-
-                <thead class="bg-gray-100 sticky top-0 z-10">
-
-                    <tr>
-
-                        <th class="px-6 py-4 text-left">Image</th>
-                        <th class="px-6 py-4 text-left">Vehicle</th>
-                        <th class="px-6 py-4 text-left">Category</th>
-                        <th class="px-6 py-4 text-left">Price</th>
-                        <th class="px-6 py-4 text-center">Stock</th>
-                        <th class="px-6 py-4 text-center">Status</th>
-                        <th class="px-6 py-4 text-center">Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                {% for vehicle in vehicles %}
-
-                    <tr class="border-b hover:bg-blue-50 transition duration-200">
-
-                        <td class="px-6 py-5">
-
-                            {% if vehicle.image %}
-
-                            <img
-                                src="{{ vehicle.image.url }}"
-                                alt="{{ vehicle.make }}"
-                                class="w-28 h-20 rounded-xl object-cover border shadow">
-
-                            {% else %}
-
-                            <img
-                                src="{% static 'images/no-image.png' %}"
-                                alt="No Image"
-                                class="w-28 h-20 rounded-xl object-cover border shadow">
-
-                            {% endif %}
-
-                        </td>
-
-                        <td class="px-6 py-5">
-
-                            <h3 class="font-bold text-lg">
-
-                                {{ vehicle.make }}
-
-                            </h3>
-
-                            <p class="text-gray-500">
-
-                                {{ vehicle.model }}
-
-                            </p>
-
-                        </td>
-
-                        <td class="px-6 py-5">
-
-                            <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm">
-
-                                {{ vehicle.category }}
-
-                            </span>
-
-                        </td>
-
-                        <td class="px-6 py-5">
-
-                            <span class="text-green-700 font-bold text-lg">
-
-                                ₹{{ vehicle.price }}
-
-                            </span>
-
-                        </td>
-
-                        <td class="px-6 py-5 text-center font-bold">
-
-                            {{ vehicle.quantity }}
-
-                        </td>
-
-                        <td class="px-6 py-5 text-center">
-
-                            {% if vehicle.quantity == 0 %}
-
-                                <span class="bg-red-100 text-red-700 px-4 py-2 rounded-full">
-
-                                    Out of Stock
-
-                                </span>
-
-                            {% elif vehicle.quantity <= 5 %}
-
-                                <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
-
-                                    Low Stock
-
-                                </span>
-
-                            {% else %}
-
-                                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full">
-
-                                    In Stock
-
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-                        <td class="px-6 py-5">
-
-                            <div class="flex justify-center gap-2 flex-wrap">
-
-                                <a
-                                    href="{% url 'vehicle-details' vehicle.id %}"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
-
-                                    View
-
-                                </a>
-
-                                <a
-                                    href="{% url 'edit-vehicle' vehicle.id %}"
-                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
-
-                                    Edit
-
-                                </a>
-
-                                <button
-                                    onclick="deleteVehicle({{ vehicle.id }})"
-                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
-
-                                    Delete
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                {% empty %}
-
-                    <tr>
-
-                        <td colspan="7">
-
-                            <div class="text-center py-20">
-
-                                <div class="text-7xl">
-
-                                    🚘
-
-                                </div>
-
-                                <h2 class="text-3xl font-bold mt-6 text-gray-700">
-
-                                    No Vehicles Found
-
-                                </h2>
-
-                                <p class="text-gray-500 mt-3">
-
-                                    Start by adding your first vehicle to the inventory.
-
-                                </p>
-
-                                <a
-                                    href="{% url 'add-vehicle' %}"
-                                    class="inline-block mt-8 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl">
-
-                                    Add Vehicle
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+    <div class="bg-indigo-700 text-white px-6 py-4"><h2 class="text-2xl font-semibold">Recent Sales</h2></div>
+    <table class="min-w-full">
+      <thead class="bg-gray-100">
+      <tr><th class="px-4 py-3 text-left">Vehicle</th><th>Price</th><th>Qty</th><th>Total</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+      {% for sale in recent_sales %}
+      <tr class="border-b">
+        <td class="px-4 py-3">{{ sale.vehicle.make }} {{ sale.vehicle.model }}</td>
+        <td>₹{{ sale.selling_price }}</td>
+        <td>{{ sale.quantity }}</td>
+        <td>₹{{ sale.total_amount }}</td>
+        <td>{{ sale.sold_at|date:"d M Y H:i" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="text-center py-8">No sales recorded.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-blue-700 text-white px-6 py-4"><h2 class="text-2xl font-semibold">Vehicle Inventory</h2></div>
+    <table class="min-w-full">
+      <thead class="bg-gray-100">
+      <tr><th class="px-4 py-3">Vehicle</th><th>Category</th><th>Price</th><th>Stock</th></tr>
+      </thead>
+      <tbody>
+      {% for vehicle in vehicles %}
+      <tr class="border-b">
+        <td class="px-4 py-3">{{ vehicle.make }} {{ vehicle.model }}</td>
+        <td>{{ vehicle.category }}</td>
+        <td>₹{{ vehicle.price }}</td>
+        <td>{{ vehicle.quantity }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center py-8">No vehicles found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 {% endblock %}
