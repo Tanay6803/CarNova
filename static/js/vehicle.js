@@ -1,49 +1,61 @@
 const VEHICLE_API = "/api/vehicles/";
 
 function getAccessToken() {
-
     return localStorage.getItem("access");
+}
 
+function showMessage(message, success = true) {
+    alert(message);
 }
 
 async function deleteVehicle(id) {
 
-    if (!confirm("Delete this vehicle?")) {
+    const confirmed = confirm(
+        "Are you sure you want to delete this vehicle?\n\nThis action cannot be undone."
+    );
 
+    if (!confirmed) {
         return;
-
     }
 
-    const response = await fetch(
+    try {
 
-        VEHICLE_API + id + "/delete/",
-
-        {
-
-            method: "DELETE",
-
-            headers: {
-
-                "Authorization": "Bearer " + getAccessToken(),
-                "Content-Type": "application/json"
-
+        const response = await fetch(
+            VEHICLE_API + id + "/delete/",
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + getAccessToken(),
+                    "Content-Type": "application/json"
+                }
             }
+        );
+
+        if (response.ok) {
+
+            showMessage("Vehicle deleted successfully.");
+
+            location.reload();
+
+        } else {
+
+            const data = await response.json();
+
+            showMessage(
+                data.detail || "Unable to delete vehicle.",
+                false
+            );
 
         }
 
-    );
+    } catch (error) {
 
-    if (response.ok) {
+        showMessage(
+            "Network error while deleting vehicle.",
+            false
+        );
 
-        alert("Vehicle Deleted Successfully");
-
-        location.reload();
-
-    }
-
-    else {
-
-        alert("Unable to delete vehicle.");
+        console.error(error);
 
     }
 
@@ -51,38 +63,65 @@ async function deleteVehicle(id) {
 
 async function purchaseVehicle(id) {
 
-    const response = await fetch(
+    const confirmed = confirm(
+        "Are you sure you want to purchase this vehicle?"
+    );
 
-        VEHICLE_API + id + "/purchase/",
+    if (!confirmed) {
+        return;
+    }
 
-        {
+    const purchaseButton = event.target;
 
-            method: "POST",
+    const originalText = purchaseButton.innerHTML;
 
-            headers: {
+    purchaseButton.disabled = true;
+    purchaseButton.innerHTML = "Processing...";
 
-                "Authorization": "Bearer " + getAccessToken(),
-                "Content-Type": "application/json"
+    try {
 
+        const response = await fetch(
+            VEHICLE_API + id + "/purchase/",
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + getAccessToken(),
+                    "Content-Type": "application/json"
+                }
             }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+            showMessage(data.message);
+
+            location.reload();
+
+        } else {
+
+            showMessage(
+                data.error || "Purchase failed.",
+                false
+            );
+
+            purchaseButton.disabled = false;
+            purchaseButton.innerHTML = originalText;
 
         }
 
-    );
+    } catch (error) {
 
-    const data = await response.json();
+        showMessage(
+            "Network error while purchasing vehicle.",
+            false
+        );
 
-    if (response.ok) {
+        purchaseButton.disabled = false;
+        purchaseButton.innerHTML = originalText;
 
-        alert(data.message);
-
-        location.reload();
-
-    }
-
-    else {
-
-        alert(data.error || "Purchase Failed");
+        console.error(error);
 
     }
 
@@ -90,44 +129,62 @@ async function purchaseVehicle(id) {
 
 async function restockVehicle(id, quantity) {
 
-    const response = await fetch(
+    quantity = parseInt(quantity);
 
-        VEHICLE_API + id + "/restock/",
+    if (isNaN(quantity) || quantity <= 0) {
 
-        {
+        showMessage(
+            "Please enter a valid quantity.",
+            false
+        );
 
-            method: "POST",
-
-            headers: {
-
-                "Authorization": "Bearer " + getAccessToken(),
-                "Content-Type": "application/json"
-
-            },
-
-            body: JSON.stringify({
-
-                quantity: quantity
-
-            })
-
-        }
-
-    );
-
-    const data = await response.json();
-
-    if (response.ok) {
-
-        alert(data.message);
-
-        location.reload();
+        return;
 
     }
 
-    else {
+    try {
 
-        alert(data.detail || "Restock Failed");
+        const response = await fetch(
+            VEHICLE_API + id + "/restock/",
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + getAccessToken(),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    quantity: quantity
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+            showMessage(data.message);
+
+            location.reload();
+
+        } else {
+
+            showMessage(
+                data.detail ||
+                data.error ||
+                "Restock failed.",
+                false
+            );
+
+        }
+
+    } catch (error) {
+
+        showMessage(
+            "Network error while restocking vehicle.",
+            false
+        );
+
+        console.error(error);
 
     }
 

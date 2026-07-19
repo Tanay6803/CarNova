@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
+from django.utils import timezone
 
-from vehicles.models import Vehicle
+from vehicles.models import Vehicle, Sale
 
 
 def home(request):
@@ -74,6 +75,7 @@ def register_page(request):
 def dashboard(request):
 
     vehicles = Vehicle.objects.all().order_by("-created_at")
+    sales = Sale.objects.select_related("vehicle").order_by("-sold_at")
 
     total_vehicles = vehicles.count()
 
@@ -92,15 +94,48 @@ def dashboard(request):
         quantity=0
     ).count()
 
+    total_sales = sales.count()
+
+    total_revenue = sum(
+        sale.total_amount
+        for sale in sales
+    )
+
+    today = timezone.now().date()
+
+    todays_sales = sales.filter(
+        sold_at__date=today
+    ).count()
+
+    best_selling_vehicle = (
+        Sale.objects
+        .values(
+            "vehicle__make",
+            "vehicle__model",
+        )
+        .annotate(
+            total_sold=Sum("quantity")
+        )
+        .order_by("-total_sold")
+        .first()
+    )
+
+    recent_sales = sales[:10]
+
     return render(
         request,
         "dashboard.html",
         {
             "vehicles": vehicles,
+            "recent_sales": recent_sales,
             "total_vehicles": total_vehicles,
             "inventory_value": inventory_value,
             "total_categories": total_categories,
             "out_of_stock": out_of_stock,
+            "total_sales": total_sales,
+            "total_revenue": total_revenue,
+            "todays_sales": todays_sales,
+            "best_selling_vehicle": best_selling_vehicle,
         },
     )
 

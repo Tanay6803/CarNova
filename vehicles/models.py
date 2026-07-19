@@ -28,8 +28,7 @@ class Vehicle(models.Model):
     image = models.ImageField(
         upload_to="vehicles/",
         blank=True,
-        null=True,
-        default="vehicles/default_vehicle.jpg"
+        null=True
     )
 
     price = models.DecimalField(
@@ -69,3 +68,42 @@ class Vehicle(models.Model):
     def __str__(self):
 
         return f"{self.make} {self.model}"
+
+
+class Sale(models.Model):
+
+    vehicle = models.ForeignKey(
+        Vehicle,
+        on_delete=models.CASCADE,
+        related_name="sales"
+    )
+
+    selling_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )
+
+    quantity = models.PositiveIntegerField(
+        default=1
+    )
+
+    sold_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        ordering = ["-sold_at"]
+
+    @property
+    def total_amount(self):
+
+        return self.selling_price * self.quantity
+
+    def __str__(self):
+
+        return (
+            f"{self.vehicle.make} "
+            f"{self.vehicle.model} "
+            f"({self.quantity})"
+        )

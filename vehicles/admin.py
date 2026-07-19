@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Vehicle
+from .models import Vehicle, Sale
 
 
 @admin.register(Vehicle)
@@ -15,6 +15,7 @@ class VehicleAdmin(admin.ModelAdmin):
         "category",
         "price",
         "quantity",
+        "inventory_value_display",
         "stock_status",
         "created_at",
     )
@@ -30,8 +31,13 @@ class VehicleAdmin(admin.ModelAdmin):
         "created_at",
     )
 
+    ordering = (
+        "-created_at",
+    )
+
     readonly_fields = (
         "image_preview",
+        "inventory_value_display",
         "created_at",
         "updated_at",
     )
@@ -54,11 +60,12 @@ class VehicleAdmin(admin.ModelAdmin):
                 "fields": (
                     "price",
                     "quantity",
+                    "inventory_value_display",
                 )
             },
         ),
         (
-            "Preview",
+            "Image Preview",
             {
                 "fields": (
                     "image_preview",
@@ -79,12 +86,13 @@ class VehicleAdmin(admin.ModelAdmin):
     def image_preview(self, obj):
 
         if obj.image:
+
             return format_html(
-                '<img src="{}" width="80" height="60" style="border-radius:8px;" />',
+                '<img src="{}" width="120" height="80" style="border-radius:10px;border:1px solid #ccc;" />',
                 obj.image.url
             )
 
-        return "No Image"
+        return "No Image Available"
 
     image_preview.short_description = "Preview"
 
@@ -98,4 +106,67 @@ class VehicleAdmin(admin.ModelAdmin):
 
         return "In Stock"
 
-    stock_status.short_description = "Status"
+    stock_status.short_description = "Stock Status"
+
+    def inventory_value_display(self, obj):
+
+        return f"₹ {obj.inventory_value:,.2f}"
+
+    inventory_value_display.short_description = "Inventory Value"
+
+
+@admin.register(Sale)
+class SaleAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "id",
+        "vehicle",
+        "selling_price",
+        "quantity",
+        "total_amount_display",
+        "sold_at",
+    )
+
+    search_fields = (
+        "vehicle__make",
+        "vehicle__model",
+        "vehicle__category",
+    )
+
+    list_filter = (
+        "sold_at",
+        "vehicle__category",
+    )
+
+    ordering = (
+        "-sold_at",
+    )
+
+    readonly_fields = (
+        "vehicle",
+        "selling_price",
+        "quantity",
+        "total_amount_display",
+        "sold_at",
+    )
+
+    fieldsets = (
+        (
+            "Sale Details",
+            {
+                "fields": (
+                    "vehicle",
+                    "selling_price",
+                    "quantity",
+                    "total_amount_display",
+                    "sold_at",
+                )
+            },
+        ),
+    )
+
+    def total_amount_display(self, obj):
+
+        return f"₹ {obj.total_amount:,.2f}"
+
+    total_amount_display.short_description = "Total Amount"

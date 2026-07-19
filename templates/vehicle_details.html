@@ -26,7 +26,7 @@
 
                 <img
                     src="{% static 'images/no-image.png' %}"
-                    alt="No Image Available"
+                    alt="No Image"
                     class="w-full h-[500px] object-cover rounded-xl shadow-lg"
                 >
 
@@ -34,13 +34,14 @@
 
             </div>
 
-            <!-- Vehicle Details -->
+            <!-- Vehicle Information -->
 
             <div class="p-10 flex flex-col justify-between">
 
                 <div>
 
-                    <span class="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-4">
+                    <span
+                        class="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-5">
 
                         {{ vehicle.category }}
 
@@ -58,13 +59,17 @@
 
                     </h2>
 
-                    <div class="mt-8 space-y-5 text-lg">
+                    <div class="mt-10 space-y-6 text-lg">
 
                         <div class="flex justify-between border-b pb-3">
 
-                            <span class="font-semibold">Price</span>
+                            <span class="font-semibold">
 
-                            <span class="text-green-700 font-bold">
+                                Price
+
+                            </span>
+
+                            <span class="font-bold text-green-700">
 
                                 ₹ {{ vehicle.price }}
 
@@ -74,49 +79,70 @@
 
                         <div class="flex justify-between border-b pb-3">
 
-                            <span class="font-semibold">Category</span>
+                            <span class="font-semibold">
 
-                            <span>{{ vehicle.category }}</span>
+                                Category
+
+                            </span>
+
+                            <span>
+
+                                {{ vehicle.category }}
+
+                            </span>
 
                         </div>
 
                         <div class="flex justify-between border-b pb-3">
 
-                            <span class="font-semibold">Available Stock</span>
+                            <span class="font-semibold">
 
-                            <span>{{ vehicle.quantity }}</span>
+                                Available Stock
+
+                            </span>
+
+                            <span
+                                id="stockQuantity"
+                                class="font-bold">
+
+                                {{ vehicle.quantity }}
+
+                            </span>
 
                         </div>
 
                         <div class="flex justify-between">
 
-                            <span class="font-semibold">Status</span>
+                            <span class="font-semibold">
 
-                            {% if vehicle.quantity == 0 %}
-
-                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
-
-                                Out of Stock
+                                Status
 
                             </span>
 
-                            {% elif vehicle.quantity <= 5 %}
+                            <span
+                                id="stockBadge"
+                                class="
+                                px-3
+                                py-1
+                                rounded-full
+                                {% if vehicle.quantity == 0 %}
+                                    bg-red-100 text-red-700
+                                {% elif vehicle.quantity <= 5 %}
+                                    bg-yellow-100 text-yellow-700
+                                {% else %}
+                                    bg-green-100 text-green-700
+                                {% endif %}
+                                ">
 
-                            <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-
-                                Low Stock
+                                {% if vehicle.quantity == 0 %}
+                                    Out of Stock
+                                {% elif vehicle.quantity <= 5 %}
+                                    Low Stock
+                                {% else %}
+                                    In Stock
+                                {% endif %}
 
                             </span>
-
-                            {% else %}
-
-                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-
-                                In Stock
-
-                            </span>
-
-                            {% endif %}
 
                         </div>
 
@@ -127,22 +153,37 @@
                 <div class="mt-12 flex flex-col sm:flex-row gap-4">
 
                     <button
-                        onclick="purchaseVehicle({{ vehicle.id }})"
+
+                        id="purchaseBtn"
+
+                        onclick="purchaseVehicleLive({{ vehicle.id }})"
+
                         class="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl text-lg font-semibold transition"
-                        {% if vehicle.quantity == 0 %}disabled{% endif %}
-                    >
+
                         {% if vehicle.quantity == 0 %}
+                        disabled
+                        {% endif %}>
+
+                        {% if vehicle.quantity == 0 %}
+
                             Out of Stock
+
                         {% else %}
+
                             Purchase Vehicle
+
                         {% endif %}
+
                     </button>
 
                     <a
+
                         href="{% url 'home' %}"
-                        class="flex-1 text-center bg-gray-700 hover:bg-gray-800 text-white py-4 rounded-xl text-lg font-semibold transition"
-                    >
+
+                        class="flex-1 text-center bg-gray-700 hover:bg-gray-800 text-white py-4 rounded-xl text-lg font-semibold rounded-xl">
+
                         Back to Inventory
+
                     </a>
 
                 </div>
@@ -154,5 +195,122 @@
     </div>
 
 </div>
+
+<script>
+
+async function purchaseVehicleLive(id){
+
+    if(!confirm("Purchase this vehicle?")){
+        return;
+    }
+
+    const btn=document.getElementById("purchaseBtn");
+
+    btn.disabled=true;
+
+    btn.innerHTML="Processing...";
+
+    try{
+
+        const response=await fetch(
+
+            "/api/vehicles/"+id+"/purchase/",
+
+            {
+
+                method:"POST",
+
+                headers:{
+
+                    "Authorization":"Bearer "+localStorage.getItem("access"),
+
+                    "Content-Type":"application/json"
+
+                }
+
+            }
+
+        );
+
+        const data=await response.json();
+
+        if(response.ok){
+
+            let stock=document.getElementById("stockQuantity");
+
+            let badge=document.getElementById("stockBadge");
+
+            let quantity=parseInt(stock.innerHTML);
+
+            quantity--;
+
+            stock.innerHTML=quantity;
+
+            if(quantity<=0){
+
+                badge.innerHTML="Out of Stock";
+
+                badge.className="bg-red-100 text-red-700 px-3 py-1 rounded-full";
+
+                btn.innerHTML="Out of Stock";
+
+                btn.className="flex-1 bg-red-600 text-white py-4 rounded-xl text-lg font-semibold";
+
+                btn.disabled=true;
+
+            }
+
+            else if(quantity<=5){
+
+                badge.innerHTML="Low Stock";
+
+                badge.className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full";
+
+                btn.innerHTML="Purchase Vehicle";
+
+                btn.disabled=false;
+
+            }
+
+            else{
+
+                badge.innerHTML="In Stock";
+
+                badge.className="bg-green-100 text-green-700 px-3 py-1 rounded-full";
+
+                btn.innerHTML="Purchase Vehicle";
+
+                btn.disabled=false;
+
+            }
+
+            alert(data.message);
+
+        }
+
+        else{
+
+            alert(data.error || "Purchase failed.");
+
+            btn.innerHTML="Purchase Vehicle";
+            btn.disabled=false;
+
+        }
+
+    }
+
+    catch(error){
+
+        alert("Network error.");
+
+        btn.innerHTML="Purchase Vehicle";
+
+        btn.disabled=false;
+
+    }
+
+}
+
+</script>
 
 {% endblock %}
