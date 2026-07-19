@@ -4,54 +4,129 @@
 
 <div class="max-w-7xl mx-auto mt-10 px-6">
 
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10">
 
-        <h1 class="text-4xl font-bold">
+        <div>
 
-            Dashboard
+            <h1 class="text-4xl font-bold text-gray-800">
 
-        </h1>
+                DriveHub Dashboard
 
-        <button
-            id="logoutBtn"
-            class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded">
+            </h1>
 
-            Logout
+            <p class="text-gray-500 mt-2">
 
-        </button>
+                Manage your vehicle inventory efficiently.
 
-    </div>
+            </p>
 
-    <div class="mb-8">
+        </div>
 
         <a
             href="{% url 'add-vehicle' %}"
-            class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded">
+            class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow">
 
-            Add Vehicle
+            + Add Vehicle
 
         </a>
 
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-x-auto">
+    <!-- Dashboard Statistics -->
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+
+            <p class="text-gray-500">
+
+                Total Vehicles
+
+            </p>
+
+            <h2 class="text-4xl font-bold text-blue-700 mt-3">
+
+                {{ total_vehicles }}
+
+            </h2>
+
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+
+            <p class="text-gray-500">
+
+                Inventory Value
+
+            </p>
+
+            <h2 class="text-3xl font-bold text-green-600 mt-3">
+
+                ₹{{ inventory_value }}
+
+            </h2>
+
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+
+            <p class="text-gray-500">
+
+                Categories
+
+            </p>
+
+            <h2 class="text-4xl font-bold text-purple-600 mt-3">
+
+                {{ total_categories }}
+
+            </h2>
+
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+
+            <p class="text-gray-500">
+
+                Out of Stock
+
+            </p>
+
+            <h2 class="text-4xl font-bold text-red-600 mt-3">
+
+                {{ out_of_stock }}
+
+            </h2>
+
+        </div>
+
+    </div>
+
+    <!-- Vehicle Table -->
+
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+
+        <div class="px-6 py-4 bg-blue-700 text-white">
+
+            <h2 class="text-2xl font-semibold">
+
+                Vehicle Inventory
+
+            </h2>
+
+        </div>
 
         <table class="w-full">
 
-            <thead class="bg-gray-200">
+            <thead class="bg-gray-100">
 
                 <tr>
 
                     <th class="p-4 text-left">Make</th>
-
                     <th class="p-4 text-left">Model</th>
-
                     <th class="p-4 text-left">Category</th>
-
                     <th class="p-4 text-left">Price</th>
-
                     <th class="p-4 text-left">Stock</th>
-
                     <th class="p-4 text-center">Actions</th>
 
                 </tr>
@@ -62,9 +137,9 @@
 
             {% for vehicle in vehicles %}
 
-                <tr class="border-b hover:bg-gray-50">
+                <tr class="border-b hover:bg-gray-50 transition">
 
-                    <td class="p-4">
+                    <td class="p-4 font-medium">
 
                         {{ vehicle.make }}
 
@@ -82,7 +157,7 @@
 
                     </td>
 
-                    <td class="p-4">
+                    <td class="p-4 font-semibold text-green-700">
 
                         ₹{{ vehicle.price }}
 
@@ -90,17 +165,41 @@
 
                     <td class="p-4">
 
-                        {{ vehicle.quantity }}
+                        {% if vehicle.quantity > 0 %}
+
+                            <span class="text-green-600 font-semibold">
+
+                                {{ vehicle.quantity }}
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-red-600 font-semibold">
+
+                                Out of Stock
+
+                            </span>
+
+                        {% endif %}
 
                     </td>
 
                     <td class="p-4">
 
-                        <div class="flex justify-center gap-3">
+                        <div class="flex flex-wrap justify-center gap-2">
+
+                            <a
+                                href="{% url 'vehicle-details' vehicle.id %}"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded">
+
+                                View
+
+                            </a>
 
                             <a
                                 href="{% url 'edit-vehicle' vehicle.id %}"
-                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded">
 
                                 Edit
 
@@ -108,7 +207,7 @@
 
                             <button
                                 onclick="deleteVehicle({{ vehicle.id }})"
-                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded">
 
                                 Delete
 
@@ -124,11 +223,30 @@
 
                 <tr>
 
-                    <td
-                        colspan="6"
-                        class="text-center p-8 text-gray-500">
+                    <td colspan="6"
+                        class="text-center py-16">
 
-                        No Vehicles Available
+                        <div>
+
+                            <div class="text-6xl mb-4">
+
+                                🚗
+
+                            </div>
+
+                            <h2 class="text-2xl font-semibold">
+
+                                No Vehicles Available
+
+                            </h2>
+
+                            <p class="text-gray-500 mt-2">
+
+                                Add your first vehicle to start managing inventory.
+
+                            </p>
+
+                        </div>
 
                     </td>
 

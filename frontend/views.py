@@ -75,11 +75,32 @@ def dashboard(request):
 
     vehicles = Vehicle.objects.all().order_by("-created_at")
 
+    total_vehicles = vehicles.count()
+
+    inventory_value = sum(
+        vehicle.price * vehicle.quantity
+        for vehicle in vehicles
+    )
+
+    total_categories = (
+        vehicles.values("category")
+        .distinct()
+        .count()
+    )
+
+    out_of_stock = vehicles.filter(
+        quantity=0
+    ).count()
+
     return render(
         request,
         "dashboard.html",
         {
-            "vehicles": vehicles
+            "vehicles": vehicles,
+            "total_vehicles": total_vehicles,
+            "inventory_value": inventory_value,
+            "total_categories": total_categories,
+            "out_of_stock": out_of_stock,
         },
     )
 
