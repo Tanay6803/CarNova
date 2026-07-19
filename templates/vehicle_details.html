@@ -2,72 +2,107 @@
 
 {% block content %}
 
-<div class="max-w-3xl mx-auto mt-10 bg-white shadow rounded p-8">
+<div class="max-w-6xl mx-auto mt-12 bg-white shadow-xl rounded-xl p-10">
 
-    <h1 class="text-3xl font-bold mb-8">
+    <div class="flex justify-between items-center">
 
-        Edit Vehicle
+        <div>
 
-    </h1>
+            <h1 class="text-4xl font-bold">
 
-    <form
-        id="editVehicleForm"
-        data-vehicle-id="{{ vehicle.id }}"
-        class="space-y-5">
+                {{ vehicle.make }} {{ vehicle.model }}
 
-        <input
-            id="make"
-            type="text"
-            value="{{ vehicle.make }}"
-            class="w-full border rounded p-3"
-            required
-        >
+            </h1>
 
-        <input
-            id="model"
-            type="text"
-            value="{{ vehicle.model }}"
-            class="w-full border rounded p-3"
-            required
-        >
+            <p class="text-gray-500 mt-2">
 
-        <select
-            id="category"
-            class="w-full border rounded p-3">
+                {{ vehicle.category }}
 
-            <option {% if vehicle.category == "Sedan" %}selected{% endif %}>Sedan</option>
-            <option {% if vehicle.category == "SUV" %}selected{% endif %}>SUV</option>
-            <option {% if vehicle.category == "Hatchback" %}selected{% endif %}>Hatchback</option>
-            <option {% if vehicle.category == "Truck" %}selected{% endif %}>Truck</option>
-            <option {% if vehicle.category == "Luxury" %}selected{% endif %}>Luxury</option>
-            <option {% if vehicle.category == "Sports" %}selected{% endif %}>Sports</option>
+            </p>
 
-        </select>
+        </div>
 
-        <input
-            id="price"
-            type="number"
-            value="{{ vehicle.price }}"
-            class="w-full border rounded p-3"
-            required
-        >
+        <a
+            href="{% url 'home' %}"
+            class="bg-gray-700 hover:bg-gray-800 text-white px-5 py-2 rounded">
 
-        <input
-            id="quantity"
-            type="number"
-            value="{{ vehicle.quantity }}"
-            class="w-full border rounded p-3"
-            required
-        >
+            Back
 
-        <button
-            class="bg-blue-600 text-white px-6 py-3 rounded">
+        </a>
 
-            Update Vehicle
+    </div>
 
-        </button>
+    <div class="mt-10 grid md:grid-cols-2 gap-12">
 
-    </form>
+        <div>
+
+            <h2 class="text-2xl font-semibold mb-6">
+
+                Vehicle Information
+
+            </h2>
+
+            <div class="space-y-4">
+
+                <p>
+
+                    <strong>Make :</strong>
+
+                    {{ vehicle.make }}
+
+                </p>
+
+                <p>
+
+                    <strong>Model :</strong>
+
+                    {{ vehicle.model }}
+
+                </p>
+
+                <p>
+
+                    <strong>Category :</strong>
+
+                    {{ vehicle.category }}
+
+                </p>
+
+                <p>
+
+                    <strong>Price :</strong>
+
+                    ₹{{ vehicle.price }}
+
+                </p>
+
+                <p>
+
+                    <strong>Available Stock :</strong>
+
+                    {{ vehicle.quantity }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="flex items-center justify-center">
+
+            <button
+
+                onclick="purchaseVehicle({{ vehicle.id }})"
+
+                class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg">
+
+                Purchase Vehicle
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
